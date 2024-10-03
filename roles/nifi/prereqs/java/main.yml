@@ -1,0 +1,11 @@
+---
+
+- name: Java Installation
+  hosts: nifi-nodes
+  become: true
+
+  roles:
+    - role: geerlingguy.java
+      when: "ansible_os_family == 'Debian'"
+      java_packages:
+        - openjdk-21-jdk

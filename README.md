@@ -14,6 +14,33 @@ Prior to executing this role, the NiFi distribution must be accessible on the ta
 - If RPM, the RPM must be installed
 - If tar.gz, it must be unarchived
 
+# Steps
+# install requirements ansible controller machine
+In order to run the playbook from the controller machine we need to install the following pacakges:
+- sshpass
+- python3-pip
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y sshpass
+sudo apt install -y python3-pip
+```
+
+# Install requirements for nifi playbook
+```bash
+cd ansible
+pip install -r python_requirements.txt
+sudo apt install -y ansible
+ansible-galaxy install -n -r nifi-playbooks/roles/nifi/ansible_requirements.yml
+```
+
+# Test ansible connexion
+
+```bash
+ansible all -m ping --ask-pass --ask-become-pass
+```
+
 ## Role Variables
 
 ### Required Variables

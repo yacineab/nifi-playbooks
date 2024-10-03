@@ -1,28 +1,71 @@
 ---
+- name: Increase maximum file handles - soft limit
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '^\\*\\s+soft\\s+nofile\\s+'
+    line: "* soft nofile {{ nifi_file_handles }}"
+    state: present
+    create: yes
+  notify: Reload PAM Limits
 
-- name: Disable vm.swappiness
+- name: Increase maximum file handles - hard limit
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '^\\*\\s+hard\\s+nofile\\s+'
+    line: "* hard nofile {{ nifi_file_handles }}"
+    state: present
+    create: yes
+  notify: Reload PAM Limits
+
+- name: Increase maximum forked processes - soft limit
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '^\\*\\s+soft\\s+nproc\\s+'
+    line: "* soft nproc {{ nifi_nproc }}"
+    state: present
+    create: yes
+  notify: Reload PAM Limits
+
+- name: Increase maximum forked processes - hard limit
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '^\\*\\s+hard\\s+nproc\\s+'
+    line: "* hard nproc {{ nifi_nproc }}"
+    state: present
+    create: yes
+  notify: Reload PAM Limits
+
+- name: Ensure /etc/security/limits.d/90-nproc.conf exists
+  file:
+    path: /etc/security/limits.d/90-nproc.conf
+    state: touch
+
+- name: Increase maximum forked processes in 90-nproc.conf
+  lineinfile:
+    path: /etc/security/limits.d/90-nproc.conf
+    regexp: '^\\*\\s+soft\\s+nproc\\s+'
+    line: "* soft nproc {{ nifi_nproc }}"
+    state: present
+    create: yes
+  notify: Reload PAM Limits
+
+- name: Set sysctl net.ipv4.ip_local_port_range
   sysctl:
-    name: vm.swappiness
-    value: "0"
+    name: net.ipv4.ip_local_port_range
+    value: "{{ nifi_port_range }}"
     state: present
     reload: yes
 
-- name: Increase nproc limits
-  replace:
-    path: "/etc/security/limits.d/20-nproc.conf"
-    replace: "*    soft    nproc    65536"
-    regexp: "^\\*.*"
+- name: Set sysctl net.netfilter.nf_conntrack_tcp_timeout_time_wait
+  sysctl:
+    name: net.netfilter.nf_conntrack_tcp_timeout_time_wait
+    value: "{{ nifi_tcp_timeout }}"
+    state: present
+    reload: yes
 
-- name: Increase number of opened files limits
-  lineinfile:
-    path: "/etc/security/limits.conf"
-    line: "*    hard    nofile    65536"
-    regexp: "\\*\\s*hard\\s*nofile\\s*.*"
-    insertbefore: "# End of file"
-
-- name: Increase number of opened files limits
-  lineinfile:
-    path: "/etc/security/limits.conf"
-    line: "*    soft    nofile    65536"
-    regexp: "\\*\\s*soft\\s*nofile\\s*.*"
-    insertbefore: "# End of file"
+- name: Set vm.swappiness to 0
+  sysctl:
+    name: vm.swappiness
+    value: "{{ nifi_swappiness }}"
+    state: present
+    reload: yes

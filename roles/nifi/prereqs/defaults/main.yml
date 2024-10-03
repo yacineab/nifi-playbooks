@@ -1,0 +1,6 @@
+---
+nifi_file_handles: 50000
+nifi_nproc: 10000
+nifi_port_range: "10000 65000"
+nifi_tcp_timeout: 1
+nifi_swappiness: 0

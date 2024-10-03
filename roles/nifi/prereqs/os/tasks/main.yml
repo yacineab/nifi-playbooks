@@ -11,12 +11,12 @@
     remote_src: yes
     extra_opts: [ -n ]
 
-- name: Ensure Java 21 is installed
-  ansible.builtin.apt:
-    name: openjdk-21-jre
-    state: present
-    update_cache: yes
-      
+# - name: Ensure Java 21 is installed
+#   ansible.builtin.apt:
+#     name: openjdk-21-jre
+#     state: present
+#     update_cache: yes
+
 - name: Install necessary dependencies
   ansible.builtin.apt:
     name: "{{ item }}"
