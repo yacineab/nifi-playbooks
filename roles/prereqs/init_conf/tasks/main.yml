@@ -1,0 +1,28 @@
+---
+
+- name: Disable vm.swappiness
+  sysctl:
+    name: vm.swappiness
+    value: "0"
+    state: present
+    reload: yes
+
+- name: Increase nproc limits
+  replace:
+    path: "/etc/security/limits.d/20-nproc.conf"
+    replace: "*    soft    nproc    65536"
+    regexp: "^\\*.*"
+
+- name: Increase number of opened files limits
+  lineinfile:
+    path: "/etc/security/limits.conf"
+    line: "*    hard    nofile    65536"
+    regexp: "\\*\\s*hard\\s*nofile\\s*.*"
+    insertbefore: "# End of file"
+
+- name: Increase number of opened files limits
+  lineinfile:
+    path: "/etc/security/limits.conf"
+    line: "*    soft    nofile    65536"
+    regexp: "\\*\\s*soft\\s*nofile\\s*.*"
+    insertbefore: "# End of file"

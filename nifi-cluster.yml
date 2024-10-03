@@ -1,0 +1,65 @@
+---
+
+- name: Configure System prereq
+  hosts: all
+  roles:
+    - prereqs/init_conf
+  tags:
+    - prereqs
+
+- name: Install Java and downlaod nifi packages
+  hosts: all
+  roles:
+    - prereqs/os
+  tags:
+    - os
+
+- name: Setup NiFi Cluster et ZooKeeper
+  hosts: nifi_cluster
+  become: yes
+  gather_facts: yes
+  vars:
+    nifi_single_node: False
+    nifi_version: "2.0.0-M4"  # Version mise à jour pour NiFi
+    #zookeeper_version: "3.8.4"  # Version mise à jour pour ZooKeeper
+    nifi_state_management_embedded_zookeeper_start: True # Utilisation du Zookeeper intégré avec la solution Nif
+
+  roles:
+    - role: nifi
+      nifi_major_version: "{{ nifi_version }}"
+      nifi_zookeeper_servers: "{{ groups['zookeeper-nodes'] }}"
+
+#  tasks:
+#
+#    - name: Configure NiFi with template
+#      ansible.builtin.template:
+#        src: "{{ role_path }}/templates/{{ nifi_version }}/nifi.properties.j2"
+#        dest: "{{ nifi_etc_dir }}/nifi.properties"
+#
+#    - name: Start NiFi service
+#      ansible.builtin.service:
+#        name: nifi
+#        state: started
+#        enabled: yes
+#
+#- name: Setup ZooKeeper
+#  hosts: zookeeper-nodes
+#  become: yes
+#
+#  tasks:
+#    - name: Extract ZooKeeper binaries
+#      ansible.builtin.unarchive:
+#        src: /tmp/zookeeper-{{ zookeeper_version }}-bin.tar.gz
+#        dest: /opt/
+#        remote_src: yes
+#
+#    - name: Configure ZooKeeper
+#      ansible.builtin.template:
+#        src: "{{ role_path }}/templates/zookeeper.cfg.j2"
+#        dest: /opt/zookeeper-{{ zookeeper_version }}/conf/zoo.cfg
+#
+#    - name: Start ZooKeeper service
+#      ansible.builtin.command:
+#        cmd: /opt/zookeeper-{{ zookeeper_version }}/bin/zkServer.sh start
+#        creates: /opt/zookeeper-{{ zookeeper_version }}/data/zookeeper_server.pid
+        

@@ -1,0 +1,39 @@
+---
+- name: Download NiFi binaries
+  ansible.builtin.get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.tar.gz"
+    dest: /tmp/nifi-{{ nifi_version }}-bin.tar.g
+    
+- name: Extract NiFi binaries
+  ansible.builtin.unarchive:
+    src: /tmp/nifi-{{ nifi_version }}-bin.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Add OpenJDK repository
+  ansible.builtin.apt_repository:
+    repo: "ppa:openjdk-r/ppa"
+    state: present
+    update_cache: yes
+
+- name: Ensure Java 21 is installed
+  ansible.builtin.apt:
+    name: openjdk-21-jdk
+    state: present
+    update_cache: yes
+      
+- name: Install necessary dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - curl
+    - wget
+    - net-tools
+    - vim
+    - telnet
+    - bind-utils
+    - unzip
+    - screen
+    - mlocate
