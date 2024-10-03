@@ -3,14 +3,14 @@
 - name: Configure System prereq
   hosts: all
   roles:
-    - prereqs/init_conf
+    - nifi/prereqs/init_conf
   tags:
     - prereqs
 
 - name: Install Java and downlaod nifi packages
   hosts: all
   roles:
-    - prereqs/os
+    - nifi/prereqs/os
   tags:
     - os
 
@@ -25,7 +25,7 @@
     nifi_state_management_embedded_zookeeper_start: True # Utilisation du Zookeeper intégré avec la solution Nif
 
   roles:
-    - role: nifi
+    - role: nifi/deployement
       nifi_major_version: "{{ nifi_version }}"
       nifi_zookeeper_servers: "{{ groups['zookeeper-nodes'] }}"
 
