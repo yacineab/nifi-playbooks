@@ -1,14 +1,14 @@
 ---
 
 - name: Configure System prereq
-  hosts: all
+  hosts: nifi_cluster
   roles:
     - nifi/prereqs/init_conf
   tags:
     - prereqs
 
 - name: Install Java and downlaod nifi packages
-  hosts: all
+  hosts: nifi_cluster
   roles:
     - nifi/prereqs/os
   tags:
