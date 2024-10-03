@@ -1,21 +1,21 @@
 ---
 
 - name: Configure System prereq
-  hosts: nifi_cluster
+  hosts: nifi-nodes
   roles:
     - nifi/prereqs/init_conf
   tags:
     - prereqs
 
 - name: Install Java and downlaod nifi packages
-  hosts: nifi_cluster
+  hosts: nifi-nodes
   roles:
     - nifi/prereqs/os
   tags:
     - os
 
 - name: Setup NiFi Cluster et ZooKeeper
-  hosts: nifi_cluster
+  hosts: nifi-nodes
   become: yes
   gather_facts: yes
   vars:
