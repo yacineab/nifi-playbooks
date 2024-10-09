@@ -14,7 +14,12 @@
   tags:
     - os
 
-- name: Setup NiFi Cluster et ZooKeeper
+- name: Setup ZooKeeper Cluster
+  hosts: zookeeper-nodes
+  roles:
+    - nifi.zookeeper
+
+- name: Setup NiFi Cluster
   hosts: nifi-nodes
   become: yes
   gather_facts: yes
@@ -22,7 +27,7 @@
     nifi_single_node: False
     nifi_version: "2.0.0-M4"  # Version mise à jour pour NiFi
     #zookeeper_version: "3.8.4"  # Version mise à jour pour ZooKeeper
-    nifi_state_management_embedded_zookeeper_start: True # Utilisation du Zookeeper intégré avec la solution Nif
+    #nifi_state_management_embedded_zookeeper_start: True # Utilisation du Zookeeper intégré avec la solution Nif
 
   roles:
     - role: nifi/deployement
